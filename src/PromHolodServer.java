@@ -161,7 +161,7 @@ class Colection implements Serializable{
 			load("mainGroup");
 		} catch (ClassNotFoundException | IOException e) {e.printStackTrace();}
 		return mainGroup;
-		//вставить методы памяти
+		//вставить методы памяти 2
 	}
 	
 	void load(String mamory) throws IOException, ClassNotFoundException{
