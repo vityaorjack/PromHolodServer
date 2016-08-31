@@ -45,11 +45,10 @@ class MyFrame extends JFrame {
 	}
 }
 class MyPanel extends JPanel {
-	static String console;
+	static String console="";
 	public Image im;
 	Font font=new Font("Arial", Font.BOLD, 20);	
-	Colection colection=new Colection("kay");
-	Aparat aparat=new Aparat();
+	Colection colection=new Colection();	
 	ArrayList<Rectangle> rectangles=new ArrayList<Rectangle>();
 	
 			MyPanel(){
@@ -106,7 +105,7 @@ class MyPanel extends JPanel {
 class ServeOneJabber extends Thread {
 	   private Socket socket;
 	   private BufferedReader in;	  
-	   Colection colection = new Colection("kay");   
+	   Colection colection = new Colection();   
 	   
 	   FileOutputStream fos;
 	   ObjectInputStream oin;
@@ -139,22 +138,18 @@ class Colection implements Serializable{
 	
 	ArrayList<String> mainGroup=new ArrayList<String>();
 	ArrayList<ArrayList<String>> mainStr=new ArrayList<ArrayList<String>>();
-	ArrayList<ArrayList> main=new ArrayList<ArrayList>();	
+	ArrayList<Aparat> aparat=new ArrayList<Aparat>();	
 	
-	int condition; ArrayList mamory;
-	Colection(String kay) {
-		MyPanel.console=kay; 
-		System.out.println("+!");
-		for(int i=0;i<3;i++){mainStr.add(new ArrayList<String>());
-		main.add(new ArrayList());
-		}		
-		mainGroup.add("Компресоры");mainGroup.add("Вентиляторы");mainGroup.add("Трубы");  	
+	int condition;
+	Colection() {		
+		for(int i=0;i<3;i++){mainStr.add(new ArrayList<String>());}		
+		//mainGroup.add("Компресоры");mainGroup.add("Вентиляторы");mainGroup.add("Трубы");  	
 		mainStr.get(0).add("Филипс 2000");mainStr.get(0).add("Панасоник ад800");mainStr.get(0).add("Ссср Матор, цена 2 руб.");
 		mainStr.get(1).add("Фюджи рн52");mainStr.get(1).add("Харнит 100");mainStr.get(1).add("Супер спирит 3000");mainStr.get(1).add("Ветряк");
 		mainStr.get(2).add(" Чавунные д180");mainStr.get(2).add("Мендыне д36");mainStr.get(2).add("Сталь д20");mainStr.get(2).add("Алюминий д12");
 	}
 	Object change(Integer integer){
-		if(condition>0){if(integer>0)return main.get(condition).get(integer-1);}
+		if(condition>0){if(integer>0)return aparat;}
 		condition=integer;
 		if(integer>0){return mainStr.get(integer-1);}
 		try {
@@ -164,30 +159,34 @@ class Colection implements Serializable{
 		//вставить методы памяти 2
 	}
 	
-	void load(String mamory) throws IOException, ClassNotFoundException{
-		oin = new ObjectInputStream(new FileInputStream("Baza/"+mamory+".txt"));
+	void load(String memory) throws IOException, ClassNotFoundException{
+		oin = new ObjectInputStream(new FileInputStream("Baza/"+memory+".txt"));
 		ArrayList arrayList=(ArrayList) oin.readObject();
-		if(mamory=="mainGroup")mainGroup=arrayList;
-		else if(mamory=="mainStr") mainStr=arrayList;
+		if(memory=="mainGroup")mainGroup=arrayList;
+		else if(memory=="mainStr") mainStr=arrayList;
+		MyPanel.console="load";
 	}
-	void load(int mamory) throws IOException, ClassNotFoundException{
-		oin = new ObjectInputStream(new FileInputStream("Baza/"+mamory+".txt"));
+	void load(int memory) throws IOException, ClassNotFoundException{
+		oin = new ObjectInputStream(new FileInputStream("Baza/"+memory+".txt"));
 		ArrayList arrayList=(ArrayList) oin.readObject();
-		this.mamory=main.get(mamory);
-		this.mamory=arrayList;
+		aparat=arrayList;
 	}
-	void save(String mamory) throws FileNotFoundException, IOException{	
-		oos = new ObjectOutputStream(new FileOutputStream("Baza/"+mamory+".txt"));
-		oos.writeObject(mamory);
+	void save(String memory) throws FileNotFoundException, IOException{	
+		oos = new ObjectOutputStream(new FileOutputStream("Baza/"+memory+".txt"));
+		if(memory=="mainGroup")oos.writeObject(mainGroup);
+		else if(memory=="mainStr")oos.writeObject(mainStr);
+		oos.flush();
+		oos.close();
+	}
+	void save(int memory) throws FileNotFoundException, IOException{	
+		oos = new ObjectOutputStream(new FileOutputStream("Baza/"+memory+".txt"));
+		oos.writeObject(aparat);
 		oos.flush();
 		oos.close();
 	}
 }
-class Aparat{	
+class Aparat{
 	String main;
-	Aparat(){
-		System.out.println("aparat");
-		MyPanel.console="kay";
-		
+	Aparat(){		
 	}
 }
