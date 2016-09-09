@@ -106,7 +106,7 @@ class ServeOneJabber extends Thread {
 	   private Socket socket;
 	   private BufferedReader in;	  
 	   Colection colection = new Colection();   
-	   
+	   boolean text;
 	   FileOutputStream fos;
 	   ObjectInputStream oin;
 	   ObjectOutputStream oos;	  
@@ -119,12 +119,15 @@ class ServeOneJabber extends Thread {
 	   public void run() {
 		   
 		   while(true){		  
-			   try {			   	        
+			   try {
+				   oin = new ObjectInputStream(socket.getInputStream());
+					
+				   
 				   oos = new ObjectOutputStream(socket.getOutputStream());	        	 	
-				   oos.writeObject(colection.change(new Integer(in.readLine())));
+				   oos.writeObject(colection.change((Aparat) oin.readObject()));				  
 				   oos.flush();				
 					//oos.close();	        
-			   } catch (IOException e) {e.printStackTrace(); stop();}
+			   } catch (IOException | ClassNotFoundException e) {e.printStackTrace(); stop();}
 		   }
 	      /*finally {
 	         try {System.out.println("Server Stoped !");   	 socket.close();
@@ -132,7 +135,7 @@ class ServeOneJabber extends Thread {
 	      }*/		 
 	 }
 }
-class Colection implements Serializable{	
+class Colection {	
 	ObjectOutputStream oos;	
 	ObjectInputStream oin; 
 	
@@ -148,17 +151,21 @@ class Colection implements Serializable{
 		mainStr.get(1).add("Фюджи рн52");mainStr.get(1).add("Харнит 100");mainStr.get(1).add("Супер спирит 3000");mainStr.get(1).add("Ветряк");
 		mainStr.get(2).add(" Чавунные д180");mainStr.get(2).add("Мендыне д36");mainStr.get(2).add("Сталь д20");mainStr.get(2).add("Алюминий д12");
 	}
-	Object change(Integer integer){
-		if(condition>0){if(integer>0)return aparat;}
-		condition=integer;
-		if(integer>0){return mainStr.get(integer-1);}
+	Object change(Aparat aparat){		
 		try {
-			load("mainGroup");
+			if(condition>0){
+				if(aparat.integer>0){ load(aparat.integer);  return aparat;}}
+				if(aparat.integer<8)condition=aparat.integer;
+		
+				if(aparat.integer<8){	load("mainStr");  return mainStr.get(aparat.integer);  }		
+		
+				switch(aparat.integer){
+				case 8:load("mainGroup");	return mainGroup;  
+				case 9:load("mainGroup");	return mainGroup;
+				}
 		} catch (ClassNotFoundException | IOException e) {e.printStackTrace();}
-		return mainGroup;
-		//вставить методы памяти 2
-	}
-	
+				return mainGroup;		
+	}	
 	void load(String memory) throws IOException, ClassNotFoundException{
 		oin = new ObjectInputStream(new FileInputStream("Baza/"+memory+".txt"));
 		ArrayList arrayList=(ArrayList) oin.readObject();
@@ -185,8 +192,7 @@ class Colection implements Serializable{
 		oos.close();
 	}
 }
-class Aparat{
-	String main;
-	Aparat(){		
-	}
+class Aparat implements Serializable{
+	int integer;
+	String srt;	
 }
